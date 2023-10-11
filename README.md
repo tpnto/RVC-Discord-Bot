@@ -4,6 +4,9 @@
 A Discord bot with the capabilities of processing audio/video through RVC<br><br>
 </div>
 
+https://github.com/tpnto/RVC-Discord-Bot/assets/122957904/d2801032-6711-4c0c-bffa-554f53c73cba
+
+
 # Summary
 This Discord bot has the following features:
 + Ability to generate Text-To-Speech like outputs.
