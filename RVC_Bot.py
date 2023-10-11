@@ -257,7 +257,6 @@ async def audio(ctx):
         os.remove("input.mp3")
         os.remove(outputpath)
     
-
 # ----------------------Voice List---------------------- #
 @bot.command(help="Lista de voces disponibles!")
 async def voces(ctx):
@@ -265,8 +264,6 @@ async def voces(ctx):
     await ctx.send("Esta es la lista de voces disponibles para el TTS! ")
     await ctx.send(listadevoces)
     await ctx.send("No olvides que el syntax para chat/say es: ```.commando voz, pitch, palabras```")
-
-
 
 # ----------------------- End of code ----- Run ----- #
 bot.run(DISCORD_TOKEN)
