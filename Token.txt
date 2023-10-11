@@ -1,1 +1,1 @@
-Place holder
+This is where your discord bot token will be at :)
