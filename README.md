@@ -4,7 +4,10 @@
 A Discord bot with the capabilities of processing audio/video through RVC<br><br>
 </div>
 
-https://github.com/tpnto/RVC-Discord-Bot/assets/122957904/d2801032-6711-4c0c-bffa-554f53c73cba
+
+
+https://github.com/tpnto/RVC-Discord-Bot/assets/122957904/5a770a53-4a16-4a10-bb9a-84a25a2914e8
+
 
 
 # Summary
