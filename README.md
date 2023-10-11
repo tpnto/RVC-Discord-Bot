@@ -20,6 +20,8 @@ This Discord bot has the following features:
 In order to host this bot you are going to have to use **Python 3.10.0**, otherwise it won't work. 
 [You can download it by clicking here!](https://www.python.org/downloads/release/python-3100/)
 
+In order to convert video files you will need to have [FFmpeg](https://ffmpeg.org/download.html) in the directory you are currently working on.
+
 You are also going to need these two files in your directory:
 
 + [rmvpe.pt](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt)
