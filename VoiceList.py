@@ -13,6 +13,7 @@ Voices = [
 # the path for your voice models will go here!
 
 voice_paths = {
+	
 	# it should follow this structure
 	#"Voice1": "voces/Voice1.pth",
 	#"Voice2": "voces/Voice2.pth",
