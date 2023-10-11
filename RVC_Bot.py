@@ -7,7 +7,6 @@ from VoiceList import voicelist
 from rvc_infer import rvc_convert
 from VoiceList import checarvoz
 
-
 #  --------------------Discord-Token-------------------- #
 DISCORD_TOKEN = open("Token.txt", "r").read()
 
