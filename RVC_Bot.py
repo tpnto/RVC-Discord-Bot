@@ -18,7 +18,7 @@ openai.api_key = API_KEY
 #  ---------------------Bot Set-up---------------------- #
 intents = discord.Intents.default()
 intents.message_content = True
-
+DEFVOICE = None # Starts up the bot with None as it's voice
 # if you are looking to change the PREFIX, it's
 bot = commands.Bot(command_prefix=".", # <------ This line!
                    intents=intents)
