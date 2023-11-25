@@ -7,7 +7,6 @@ from VoiceList import voicelist
 from rvc_infer import rvc_convert
 from VoiceList import checarvoz
 
-
 #  --------------------Discord-Token-------------------- #
 DISCORD_TOKEN = open("Token.txt", "r").read()
 
@@ -34,9 +33,11 @@ bot = commands.Bot(command_prefix=".", # <------ This line!
 @bot.event
 async def on_ready():
     print(f'{bot.user} esta listo!') 
+    activity = discord.Game(name="Queues & yt-dlp")
+    await bot.change_presence(activity=activity)
 
 #  -----------------VOICE-SELECTION-------------------- #
-@bot.command(help="cambia la voz y el pitch default del bot")
+@bot.command(help="Cambia la voz y el pitch default del bot.")
 async def select(ctx, *, args):
     global DEFVOICE, DEFPITCH  # use the previous declared variables
     
@@ -58,7 +59,7 @@ async def select(ctx, *, args):
     await ctx.send(f"voz cambiada a: {DEFVOICE}, pitch cambiado a: {DEFPITCH}")
 
 #  ---------------------TTS/GPT------------------------ #
-@bot.command(help="Has que el bot responda a tus preguntas")
+@bot.command(help="Has que el bot responda a tus preguntas.")
 async def chat(ctx, *, args):
     # argument split using commas: "voice, pitch, user_response".
     voz, pitch, user_response = map(str.strip, args.split(',', 2))
@@ -69,16 +70,21 @@ async def chat(ctx, *, args):
 
     TTSVoice = "es-AR-TomasNeural" # <---------- This line here!!!!!
 
-    # temp message
-    tempmsg = await ctx.send("Generando respuesta...")
 
     # the function below will help us check if the voice we chose is available.
     rvc_voice = checarvoz(voz=voz)
     if rvc_voice is None:
     # if the function returns None, then it's not available.
         await ctx.send("Esa voz no esta disponible")
-        await tempmsg.delete()
         return
+    
+    # Insert the user into the queue
+    username = ctx.author.display_name
+    queue.append(username)
+    posicion = len(queue)
+
+    # temp message
+    tempmsg = await ctx.send("Generando respuesta...")
 
     # send "user_response" to ChatGPT.
     response = openai.ChatCompletion.create(
@@ -94,25 +100,29 @@ async def chat(ctx, *, args):
     # since it's ChatGPT's generated response.
     # So, we are going to send it to Edge-tts.
     # Note: Edge-tts will run locally within your computer.
-    outputedgetts = "edgetts.mp3"
+    outputedgetts = f"chat_{posicion}.mp3"
     command = ["edge-tts", "--voice", TTSVoice, "--text", assistant_response, "--write-media", outputedgetts]
     subprocess.run(command)
 
     # sends "edgetts.mp3" to RVC.
     rvc_convert(model_path=rvc_voice,
                 f0_up_key=pitch,
-                input_path=outputedgetts
+                input_path=outputedgetts,
+                output_file_name=f"out{posicion}.wav"
                 )
     
     # this will delete our temp message.
     await tempmsg.delete()
 
     # Let's assign the location of our RVC'd audio so then we can send it to discord.
-    outputpath = "output/out.wav"
+    outputpath = f"output/out{posicion}.wav"
     audio_file = discord.File(outputpath)
 
     # send the file to discord
     await ctx.send(file=audio_file)
+
+    # POP!
+    queue.pop(0)
 
     # clean up!
     os.remove(outputedgetts)
@@ -120,13 +130,10 @@ async def chat(ctx, *, args):
 
 #  ---------------------TTS----------------------------- #
 
-@bot.command(help="Has que el bot diga algo")
+@bot.command(help="Has que cualquier voz diga cualquier cosa!")
 async def say(ctx, *, args):
     # argument split using commas: "voice, pitch, user_response".
     voice, pitch, user_response = map(str.strip, args.split(',', 2))
-
-    # TempMSG
-    tempmsg = await ctx.send("Generando respuesta...")
 
     # this line of code is very important!! if you are looking to use TTS in English, 
     # you will have to replace "es-ES-AlvaroNeural" with an english speaker.
@@ -141,9 +148,17 @@ async def say(ctx, *, args):
         await ctx.send("Esa voz no esta disponible")
         return
 
+    # TempMSG
+    tempmsg = await ctx.send("Generando respuesta...")
+
+    # Insert the user into the queue
+    username = ctx.author.display_name
+    queue.append(username)
+    posicion = len(queue)
+
     # Send it to edge-tts.
     # Note: Edge-tts will run locally within your computer.
-    outputedgetts = "edgetts.mp3"
+    outputedgetts = f"say_{posicion}.mp3"
     command = ["edge-tts", "--voice", TTSVoice, "--text", user_response, "--write-media", outputedgetts]
     subprocess.run(command)
 
@@ -151,25 +166,30 @@ async def say(ctx, *, args):
     # Send it the generated audio to RCV.
     rvc_convert(model_path=rvc_voice,
                 f0_up_key=pitch,
-                input_path=outputedgetts
+                input_path=outputedgetts,
+                output_file_name=f"out{posicion}.wav"
                 )
     
     # Delete TempMSG
     await tempmsg.delete()
 
     # Let's assign the location of our RVC'd audio so then we can send it to discord.
-    outputpath = "output/out.wav"
+    outputpath = f"output/out{posicion}.wav"
     audio_file = discord.File(outputpath)
 
     # Send the audio file to discord
     await ctx.send(file=audio_file)
+
+    # POP!
+    queue.pop(0)
 
     # clean up!
     os.remove(outputedgetts)
     os.remove(outputpath)
 
 #  ---------------------Copy audio---------------------- #
-@bot.command()
+
+@bot.command(help="Has que cualquier voz cante o hable, funciona tambien con videos!")
 async def audio(ctx):
     # These lines will check if the user input has any audio/video attachments.
     if len(ctx.message.attachments) == 0:
@@ -233,7 +253,8 @@ async def audio(ctx):
     # send the audio input to RVC
     rvc_convert(model_path=rvc_voice,
                 f0_up_key=DEFPITCH,
-                input_path=outputname
+                input_path=outputname,
+                output_file_name=f"out{posicion}.wav"
                 )
     
     #   delete tempMSG
@@ -241,11 +262,8 @@ async def audio(ctx):
 
     # Let's assign the location of our RVC'd audio so then we can use it on FFMPEG
     # or send it to discord.
-    unqueuefilename = "output/out.wav"
-    outputpath = f"output/out{posicion}.wav"
 
-    # Rename output so it has it's queue identifier
-    os.rename(unqueuefilename, outputpath)
+    outputpath = f"output/out{posicion}.wav"
 
     audio_file = discord.File(outputpath)
 
@@ -286,7 +304,7 @@ async def audio(ctx):
         os.remove(outputpath)
     
 #  ----------------------YT-DLP audio---------------------- #
-@bot.command()
+@bot.command(help="Lo mismo que audio, pero este descarga videos de youtube y otros sitios!")
 async def url(ctx, user_response):
     # argument split using commas: "voice, pitch, user_response".
     # lets make sure the user has selected a voice, if not, lets instruct him how to do it.
@@ -325,16 +343,16 @@ async def url(ctx, user_response):
     # send the audio input to RVC
     rvc_convert(model_path=rvc_voice,
                 f0_up_key=DEFPITCH,
-                input_path=outputname)
-    
+                input_path=outputname,
+                output_file_name=f"out{posicion}.wav"
+                )
+    #   delete tempMSG
+    await tempmsg.delete()
+
     # Let's assign the location of our RVC'd audio so then we can use it on FFMPEG
     # or send it to discord.
-    unqueuefilename = "output/out.wav"
+
     outputpath = f"output/out{posicion}.wav"
-
-    # Rename output so it has it's queue identifier
-    os.rename(unqueuefilename, outputpath)
-
     audio_file = discord.File(outputpath)
 
     # if your outputname was: "inputvideo.mp3", it will get send yet again to FFMPEG
@@ -343,9 +361,9 @@ async def url(ctx, user_response):
     # FFMPEG command
     command4 = [
     "ffmpeg", "-i", ytvid, "-i", outputpath,
-    "-c:v", "libx264", "-crf", "32",  #crf
-    "-vf", "scale=480:-2",  #resolucion
-    "-map", "0:v:0", "-map", "1:a:0", "-fs", "20M", f"out{posicion}.mp4", # tamaño
+    "-c:v", "libx264", "-crf", "32",  # CRF/Custom Rate Factor
+    "-vf", "scale=480:-2",  # Resolution
+    "-map", "0:v:0", "-map", "1:a:0", "-fs", "20M", f"out{posicion}.mp4", # File size
     "-y"]
 
     subprocess.run(command4)
@@ -360,7 +378,6 @@ async def url(ctx, user_response):
     queue.pop(0)
 
     # clean up!
-    await tempmsg.delete()
     os.remove(outputvid)
     os.remove(ytvid)
     os.remove(outputname)
@@ -374,6 +391,5 @@ async def voces(ctx):
     await ctx.send(listadevoces)
     await ctx.send("No olvides que el syntax para chat/say es: ```.commando voz, pitch, palabras```")
 
-
-# ----------------------- End of code ----- Run ----- #
+# ----------------------- End of code ------ Run ------ #
 bot.run(DISCORD_TOKEN)
