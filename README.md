@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-Bot</h1>
+<h1>Retrieval-Based-Voice-Conversion-Bot</h1>
 A Discord bot with the capabilities of processing audio/video through RVC<br><br>
 </div>
 
