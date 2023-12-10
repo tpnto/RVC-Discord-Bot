@@ -19,6 +19,7 @@ voice_paths = {
 	# it should follow this structure
 	# Keep in mind, the name of the voices
 	# SHOULD be lowercased. 
+	# (This is due to a function that lowercases the user input)
 	
 	#"voice1": "voces/Voice1.pth",
 	#"voice2": "voces/Voice2.pth",
