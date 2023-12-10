@@ -8,6 +8,8 @@ Voices = [
 # make sure it's in this order:
 # "Voice1", "Voice2", "Voice3"
 
+# This is so each time you use .voces, the list of voices
+# here outputs on discord. This is not related to voice_paths.
 ]
 
 # the path for your voice models will go here!
@@ -15,9 +17,12 @@ Voices = [
 voice_paths = {
 	
 	# it should follow this structure
-	#"Voice1": "voces/Voice1.pth",
-	#"Voice2": "voces/Voice2.pth",
-	#"Voice3": "voces/Voice3.pth"
+	# Keep in mind, the name of the voices
+	# SHOULD be lowercased. 
+	
+	#"voice1": "voces/Voice1.pth",
+	#"voice2": "voces/Voice2.pth",
+	#"voice3": "voces/Voice3.pth"
 }
 
 # ------you dont change anything from now on :) -------#
