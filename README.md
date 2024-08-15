@@ -35,7 +35,7 @@ Python -m venv env
 ```
 Then we are going to activate it using the terminal: 
 ```bash
-.\venv\Scripts\Activate.bat
+.\env\Scripts\Activate.bat
 ```
 After you are done setting up the environment, you are going to have to install PyTorch here's the link for it, [PyTorch](https://pytorch.org/get-started/locally/)
 # Requirements
