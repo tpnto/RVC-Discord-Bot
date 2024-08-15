@@ -41,7 +41,7 @@ After you are done setting up the environment, you are going to have to install 
 # Requirements
 After PyTorch is done installing, you are going to run these two commands:
 ``` bash
-pip install -e git+https://github.com/JarodMica/rvc.git#egg=rvc\
+pip install -e git+https://github.com/JarodMica/rvc.git#egg=rvc
 ```
 ``` bash
 pip install -e git+https://github.com/tpnto/rvc-tts-pipeline.git@rvc-output-name#egg=rvc-tts-pipe
